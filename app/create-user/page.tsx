@@ -9,9 +9,15 @@ function Login() {
           BTC Guessing Game
         </h1>
         <h2 className="font-mono text-lg">
-          Welcome! 👋🏻 Please login or create an account.
+          Let&apos;s create your account. 🚀
         </h2>
         <div className="flex flex-col space-y-4 w-96 pt-4">
+          <Input
+            label="name"
+            labelDescription="First name"
+            type="text"
+            placeholder="Your first name"
+          />
           <Input
             label="email"
             labelDescription="Email"
@@ -24,7 +30,12 @@ function Login() {
             type="password"
             placeholder="Your password"
           />
-          <Button label="Login" type="submit" icon="→" iconPosition="right" />
+          <Button
+            label="Create new user"
+            type="submit"
+            icon="→"
+            iconPosition="right"
+          />
         </div>
       </div>
     </main>
