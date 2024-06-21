@@ -1,5 +1,7 @@
 import Button from "@/components/common/button";
 import Input from "@/components/common/input";
+import { PAGES } from "@/constants/pages-mapping";
+import Link from "next/link";
 
 function Login() {
   return (
@@ -37,6 +39,15 @@ function Login() {
             iconPosition="right"
           />
         </div>
+        <p className="text-sm text-center tracking-tighter">
+          Already have an account?&nbsp;
+          <Link
+            href={PAGES.LOGIN}
+            className="underline underline-offset-2 decoration-dotted decoration-berkeleyBlue focus:ring-2 focus:ring-offset-2 focus:ring-berkeleyBlue focus:outline-none"
+          >
+            Login here
+          </Link>
+        </p>
       </div>
     </main>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 type ButtonProps = {
   label: string;
   type?: "button" | "submit";
@@ -22,13 +24,9 @@ function Button({
       onClick={onClick}
       aria-label={ariaLabel || label}
     >
-      {iconPosition === "left" && icon && (
-        <span aria-hidden="true">{icon}</span>
-      )}
+      {iconPosition === "left" && icon && <span aria-hidden>{icon}</span>}
       <span>{label}</span>
-      {iconPosition === "right" && icon && (
-        <span aria-hidden="true">{icon}</span>
-      )}
+      {iconPosition === "right" && icon && <span aria-hidden>{icon}</span>}
     </button>
   );
 }
