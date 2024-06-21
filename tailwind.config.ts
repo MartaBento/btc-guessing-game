@@ -6,8 +6,17 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {},
-  plugins: [],
+  theme: {
+    extend: {
+      fontFamily: {
+        inter: ["Inter", "sans-serif"],
+      },
+      colors: {
+        berkeleyBlue: "#1D3557",
+      },
+    },
+  },
+  plugins: [require("@tailwindcss/forms")],
 };
 
 export default config;

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "BTC Guessing Game",
+  title: {
+    default: "BTC Guessing Game",
+    template: "%s | BTC Guessing Game",
+  },
   description:
     "A web app that allows users to make guesses on whether the market price of Bitcoin (BTC/USD) will be higher or lower after one minute.",
   icons: {
@@ -43,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 type RootLayoutProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
