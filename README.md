@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Introduction
 
-## Getting Started
+This web app was built to allow users to guess whether the market price of Bitcoin (BTC/USD) will be higher or lower after one minute.
 
-First, run the development server:
+## Rules
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [ ] The player can at all times see their current score and the latest available BTC price in USD
+- [ ] The player can choose to enter a guess of either “up” or “down“
+- [ ] After a guess is entered the player cannot make new guesses until the existing guess is resolved
+- [ ] The guess is resolved when the price changes and at least 60 seconds have passed since the guess was made
+- [ ] If the guess is correct (up = price went higher, down = price went lower), the user gets 1 point added to their score. If the guess is incorrect, the user loses 1 point.
+- [ ] Players can only make one guess at a time
+- [ ] New players start with a score of 0
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Requirements
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [ ] The guesses should be resolved fairly using BTC price data from any available 3rd party API
+- [ ] The score of each player should be persisted in a backend data store
+- [ ] Players should be able to close their browser and return to see their score and continue to make more guesses
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Technologies
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Frontend: Next.js, React, Typescript and Tailwind
+- Backend/Database: AWS Services (TBD)
