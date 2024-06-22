@@ -35,23 +35,35 @@ function Header({
   );
 }
 
+function LoadingOverlay() {
+  return (
+    <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+      <div className="bg-white p-4 rounded-lg shadow-lg">
+        <p className="text-lg font-semibold">
+          We are evaluating your bet. Please wait...
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function GuessingGame({
   initialUSDPrice,
   lastUpdated,
   userScore,
 }: GuessingGameProps) {
+  const [isLoading, setLoading] = useState(false);
   const [isPlacingBet, startPlacingBet] = useTransition();
   const [hasCurrentBet, setHasCurrentBet] = useState(false);
-  const [initialCurrencyRatio, setInitialCurrencyRatio] =
-    useState(initialUSDPrice);
   const router = useRouter();
 
   useEffect(() => {
     const betType = localStorage.getItem("betType");
     setHasCurrentBet(betType !== null);
 
-    localStorage.setItem("initialUSDPrice", initialUSDPrice.toString());
-    setInitialCurrencyRatio(initialUSDPrice);
+    if (betType) {
+      startPolling(Cookies.get("userId") || "");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -63,6 +75,7 @@ function GuessingGame({
 
   const startPolling = (userId: string) => {
     let interval: number | null = null;
+    setLoading(true);
 
     const pollBetResolution = async () => {
       try {
@@ -82,6 +95,8 @@ function GuessingGame({
       } catch (error) {
         const errorMessage = (error as Error).message;
         toast.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -103,7 +118,7 @@ function GuessingGame({
 
         await placeBet(userId, betType, initialUSDPrice);
         toast.success(
-          "Your bet has been placed! The market will update soon. Your bet will be resolved when the price is updated. Please wait in this page."
+          "Your bet has been placed! The market will update soon. Your bet will be resolved when the price is updated. Please wait on this page."
         );
         startPolling(userId);
       } catch (error) {
@@ -117,7 +132,7 @@ function GuessingGame({
     <main className="flex flex-col items-center justify-center min-h-screen">
       <Header
         userScore={userScore}
-        initialUSDPrice={initialCurrencyRatio}
+        initialUSDPrice={initialUSDPrice}
         lastUpdated={lastUpdated}
       />
       <div className="flex flex-col bg-white shadow-2xl rounded-lg m-8 p-8 xl:p-12 text-center">
@@ -165,6 +180,7 @@ function GuessingGame({
       <div className="mb-8 xl:mb-0">
         <Button label="Logout" onClick={handleLogout} />
       </div>
+      {isLoading && <LoadingOverlay />}
     </main>
   );
 }
