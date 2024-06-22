@@ -37,7 +37,7 @@ function CreateUser() {
 
     startCreatingUser(async () => {
       try {
-        await userRegister(firstName, email, password);
+        await userRegister(email, password, firstName);
         toast.success(
           `${firstName}, your account was created successfully. Redirecting to login...`
         );
@@ -51,7 +51,7 @@ function CreateUser() {
 
   return (
     <main className="flex items-center justify-center min-h-screen font-mono">
-      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[600px] w-[800px] space-y-8">
+      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[600px] w-[800px] space-y-8 shadow-2xl">
         <div className="flex flex-col space-y-4 items-center">
           <h1 className="font-inter text-3xl tracking-tighter font-black">
             BTC Guessing Game

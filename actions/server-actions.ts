@@ -21,6 +21,7 @@ export async function fetchCoinMarketCap(
         Accept: "application/json",
         "X-CMC_PRO_API_KEY": process.env.COIN_MARKET_API_KEY || "",
       },
+      cache: "no-cache",
     }
   );
 
@@ -33,7 +34,7 @@ export async function fetchCoinMarketCap(
   return response.json();
 }
 
-export async function fetchUserScore(userId: string) {
+export async function fetchUserScore(userId: string): Promise<UserScore> {
   if (!userId) {
     throw GET_USER_SCORE.MISSING_PARAMS;
   }
@@ -53,7 +54,7 @@ export async function fetchUserScore(userId: string) {
 
     const user = result.rows[0];
     const { id, first_name, email, score } = user;
-    return { id, first_name, email, score } as UserScore;
+    return { id, first_name, email, score };
   } catch (error) {
     throw new Error((error as Error).message);
   }
@@ -74,7 +75,6 @@ export async function userLogin(email: string, password: string) {
     }
 
     const user = result.rows[0];
-    console.log(user);
 
     if (user.password !== password) {
       throw new Error(LOGIN_ERRORS.INVALID_CREDENTIALS);

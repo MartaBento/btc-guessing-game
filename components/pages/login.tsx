@@ -39,7 +39,7 @@ function Login() {
       try {
         const userData = await userLogin(email, password);
         Cookies.set("userEmail", email, { expires: 1 });
-        Cookies.set("userId", userData.userId.toString(), { expires: 1 });
+        Cookies.set("userId", userData.toString(), { expires: 1 });
         toast.success("Login successful. Redirecting...");
         router.push(PAGES.HOME);
       } catch (error) {
@@ -51,7 +51,7 @@ function Login() {
 
   return (
     <main className="flex items-center justify-center min-h-screen font-mono">
-      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[600px] w-[800px] space-y-8">
+      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[600px] w-[800px] space-y-8 shadow-2xl">
         <div className="flex flex-col space-y-4 items-center">
           <h1 className="font-inter text-3xl tracking-tighter font-black">
             BTC Guessing Game

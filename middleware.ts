@@ -11,7 +11,8 @@ export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const userEmailCookie = cookies.get("userEmail");
-  const isUserLoggedIn = !!userEmailCookie;
+  const userIdCookie = cookies.get("userId");
+  const isUserLoggedIn = !!userEmailCookie && !!userIdCookie;
 
   // Redirects to login page if not logged in.
   if (!isUserLoggedIn && pathname === PAGES.HOME) {
@@ -23,7 +24,7 @@ export default function middleware(request: NextRequest) {
   // Redirects to home page if logged in.
   if (
     (isUserLoggedIn && pathname === PAGES.LOGIN) ||
-    pathname === PAGES.CREATE_USER
+    (isUserLoggedIn && pathname === PAGES.CREATE_USER)
   ) {
     const redirectionUrl = new URL(PAGES.HOME, request.nextUrl.origin);
     return NextResponse.redirect(redirectionUrl);

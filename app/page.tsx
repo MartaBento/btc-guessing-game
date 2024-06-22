@@ -4,13 +4,24 @@ import { cookies } from "next/headers";
 
 export default async function Home() {
   const currentData = await fetchCoinMarketCap();
+  const userId = cookies().get("userId")?.value;
+  let userScore;
 
-  const userId = cookies().get("userId")!.value;
-  const userScore = await fetchUserScore(userId);
+  if (userId) {
+    userScore = await fetchUserScore(userId);
+  }
+
   const currentUserScore =
-    userScore.score === "-1" ? 0 : Number(userScore.score);
+    userScore && userScore.score !== "-1" ? Number(userScore.score) : 0;
+
+  const currentUSDPrice = currentData.data.BTC.quote.USD.price;
+  const lastUpdated = currentData.data.BTC.quote.USD.last_updated;
 
   return (
-    <GuessingGame currentData={currentData} userScore={currentUserScore} />
+    <GuessingGame
+      currentUSDPrice={currentUSDPrice}
+      lastUpdated={lastUpdated}
+      userScore={currentUserScore}
+    />
   );
 }
