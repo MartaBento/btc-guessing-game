@@ -11,6 +11,7 @@
   "dependencies": {
     "@next/eslint-plugin-next": "^14.2.4",
     "@tailwindcss/forms": "^0.5.7",
+    "@vercel/postgres": "^0.8.0",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18"
