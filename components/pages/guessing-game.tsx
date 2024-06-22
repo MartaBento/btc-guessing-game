@@ -5,6 +5,9 @@ import Button from "@/components/common/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { PAGES } from "@/constants/pages-apis-mapping";
+import { useEffect, useState, useTransition } from "react";
+import toast from "react-hot-toast";
+import { placeBet } from "@/actions/server-actions";
 
 type GuessingGameProps = {
   currentUSDPrice: number;
@@ -37,12 +40,43 @@ function GuessingGame({
   lastUpdated,
   userScore,
 }: GuessingGameProps) {
+  const [isPlacingBet, startPlacingBet] = useTransition();
+  const [hasCurrentBet, setHasCurrentBet] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const betType = localStorage.getItem("betType");
+    setHasCurrentBet(betType !== null);
+  }, []);
 
   const handleLogout = () => {
     Cookies.remove("userEmail");
     Cookies.remove("userId");
     router.push(PAGES.LOGIN);
+  };
+
+  const handleNewBet = async (betType: "up" | "down") => {
+    localStorage.setItem("betType", betType);
+    setHasCurrentBet(true);
+
+    startPlacingBet(async () => {
+      try {
+        const userId = Cookies.get("userId");
+
+        if (!userId) {
+          toast.error("Please login to place a bet");
+          return;
+        }
+
+        await placeBet(userId, betType);
+        toast.success(
+          "Your bet has been placed! The market will update soon. Your bet will be resolved when the price is updated. Please wait in this page."
+        );
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        toast.error(errorMessage);
+      }
+    });
   };
 
   return (
@@ -72,8 +106,20 @@ function GuessingGame({
           Ready to play? Choose one option:
         </span>
         <div className="flex justify-between space-x-4 mt-8">
-          <Button icon="☝🏻" label="Higher" iconPosition="right" />
-          <Button icon="👇🏻" label="Lower" iconPosition="right" />
+          <Button
+            icon="☝🏻"
+            label={isPlacingBet ? "Placing bet..." : "Higher"}
+            iconPosition="right"
+            onClick={() => handleNewBet("up")}
+            isDisabled={hasCurrentBet}
+          />
+          <Button
+            icon="👇🏻"
+            label={isPlacingBet ? "Placing bet..." : "Lower"}
+            iconPosition="right"
+            onClick={() => handleNewBet("down")}
+            isDisabled={hasCurrentBet}
+          />
         </div>
       </div>
       <Button label="Logout" onClick={handleLogout} />

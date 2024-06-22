@@ -9,14 +9,14 @@ This web app was built to allow users to guess whether the market price of Bitco
 - [ ] After a guess is entered the player cannot make new guesses until the existing guess is resolved
 - [ ] The guess is resolved when the price changes and at least 60 seconds have passed since the guess was made
 - [ ] If the guess is correct (up = price went higher, down = price went lower), the user gets 1 point added to their score. If the guess is incorrect, the user loses 1 point.
-- [ ] Players can only make one guess at a time
+- [x] Players can only make one guess at a time
 - [x] New players start with a score of 0
 
 ## Requirements
 
-- [ ] The guesses should be resolved fairly using BTC price data from any available 3rd party API
-- [ ] The score of each player should be persisted in a backend data store
-- [ ] Players should be able to close their browser and return to see their score and continue to make more guesses
+- [x] The guesses should be resolved fairly using BTC price data from any available 3rd party API
+- [x] The score of each player should be persisted in a backend data store
+- [x] Players should be able to close their browser and return to see their score and continue to make more guesses
 
 ## Additional functionalities
 

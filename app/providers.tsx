@@ -14,7 +14,7 @@ export function Providers({ children }: ProvidersProps) {
       <Toaster
         position="top-right"
         toastOptions={{
-          className: "p-8 font-mono text-sm",
+          className: "p-16 font-mono text-sm",
           duration: 5000,
           ariaProps: {
             role: "status",
