@@ -1,6 +1,8 @@
 # Introduction
 
-This web app was built to allow users to guess whether the market price of Bitcoin (BTC/USD) will be higher or lower after one minute.
+This web application enables users to predict if the market price of Bitcoin (BTC/USD) will increase or decrease after a one-minute interval.
+
+The web application can be accessed at [https://btc-guessing-game.vercel.app](https://btc-guessing-game.vercel.app).
 
 ## Rules
 
@@ -26,4 +28,40 @@ This web app was built to allow users to guess whether the market price of Bitco
 ## Technologies
 
 - Frontend: Next.js, React, Typescript and Tailwind
-- Backend/Database: AWS Services (TBD)
+- Database: Postgres (`btc_guessing_game_postgres_db`) (hosted in Vercel)
+- Infrastructure: Vercel
+
+## Local development setup
+
+To set up and run the project locally, follow these steps:
+
+1. Ensure you have Node.js installed on your machine.
+2. Open your terminal.
+3. Navigate to the project's root directory.
+4. Install the project dependencies by running:
+
+```bash
+npm i
+```
+
+5. Start the development server with the following command:
+
+```bash
+npm run dev
+```
+
+## Credentials
+
+To retrieve the currency exchange rates, the [CoinMarketCap API](https://coinmarketcap.com/api/documentation/v1/) was chosen to be the data provider. Follow these steps to set up the API access:
+
+1. Visit the [CoinMarketCap API documentation](https://coinmarketcap.com/api/documentation/v1/) and sign up for an account to obtain an API key.
+
+2. In the root directory of your project, create a file named `.env.local`.
+
+3. Open the `.env.local` file and add your CoinMarketCap API key in the following format:
+
+```bash
+COIN_MARKET_API_KEY=your_api_key_here
+```
+
+Replace `your_api_key_here` with the actual API key you received from CoinMarketCap. This key will be used by the application to authenticate and fetch the currency exchange ratios.
