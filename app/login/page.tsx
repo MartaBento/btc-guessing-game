@@ -10,6 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 import { PAGES } from "@/constants/pages-apis-mapping";
 import { userLogin } from "@/actions/actions";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 type LoginFormInputs = z.infer<typeof LOGIN_SCHEMA>;
 
@@ -34,9 +36,11 @@ function Login() {
 
     try {
       await userLogin(email, password);
+      Cookies.set("userEmail", email, { expires: 1 });
       router.push(PAGES.HOME);
     } catch (error) {
-      console.log(error);
+      const errorMessage = (error as Error).message;
+      toast.error(errorMessage);
     }
   };
 
