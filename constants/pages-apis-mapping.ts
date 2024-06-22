@@ -3,3 +3,9 @@ export const PAGES = {
   LOGIN: "/login",
   CREATE_USER: "/create-user",
 };
+
+export const APIS = {
+  LOGIN: "api/login",
+  CREATE_USER: "api/create-user",
+  USER_SCORE: "api/user-score",
+};

@@ -7,12 +7,11 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { PAGES } from "@/constants/pages-apis-mapping";
+import { APIS, PAGES } from "@/constants/pages-apis-mapping";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useTransition } from "react";
-import { userLogin } from "@/actions/server-actions";
 
 type LoginFormInputs = z.infer<typeof LOGIN_SCHEMA>;
 
@@ -32,19 +31,41 @@ function Login() {
     },
   });
 
+  async function login(email: string, password: string) {
+    try {
+      const response = await fetch(APIS.LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const { error } = errorData;
+        throw new Error(error);
+      }
+
+      return response.json();
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
   const onSubmit = async (data: LoginFormInputs) => {
     const { email, password } = data;
 
     startLoggingIn(async () => {
       try {
-        const userData = await userLogin(email, password);
+        const userData = await login(email, password);
         Cookies.set("userEmail", email, { expires: 1 });
-        Cookies.set("userId", userData.toString(), { expires: 1 });
+        Cookies.set("userId", userData.userId.toString(), { expires: 1 });
         toast.success("Login successful. Redirecting...");
         router.push(PAGES.HOME);
-      } catch (error) {
-        const errorMessage = (error as Error).message;
-        toast.error(errorMessage);
+      } catch (e) {
+        const error = e as Error;
+        toast.error(error.message);
       }
     });
   };

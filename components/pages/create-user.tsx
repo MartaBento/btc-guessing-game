@@ -1,10 +1,9 @@
 "use client";
 
-import { userRegister } from "@/actions/server-actions";
 import Button from "@/components/common/button";
 import Input from "@/components/common/input";
 import { CREATE_USER_SCHEMA } from "@/constants/form-schemas";
-import { PAGES } from "@/constants/pages-apis-mapping";
+import { APIS, PAGES } from "@/constants/pages-apis-mapping";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,12 +31,38 @@ function CreateUser() {
     },
   });
 
+  async function createNewUser(
+    email: string,
+    password: string,
+    firstName: string
+  ) {
+    try {
+      const response = await fetch(APIS.CREATE_USER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, firstName }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const { error } = errorData;
+        throw new Error(error);
+      }
+
+      return response.json();
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
   const onSubmit = async (data: CreateUserFormInputs) => {
     const { firstName, email, password } = data;
 
     startCreatingUser(async () => {
       try {
-        await userRegister(email, password, firstName);
+        await createNewUser(email, password, firstName);
         toast.success(
           `${firstName}, your account was created successfully. Redirecting to login...`
         );
