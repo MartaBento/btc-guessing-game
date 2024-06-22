@@ -22,3 +22,9 @@ export const PLACE_BET_ERRORS = {
   MISSING_PARAMS: "Missing userId or betType.",
   INTERNAL_SERVER_ERROR: "Internal server error.",
 };
+
+export const GET_USER_SCORE = {
+  MISSING_PARAMS: "Missing userId.",
+  USER_NOT_FOUND: "User not found.",
+  INTERNAL_SERVER_ERROR: "Internal server error.",
+};

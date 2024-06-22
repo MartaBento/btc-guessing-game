@@ -7,6 +7,7 @@ import { APIS, PAGES } from "@/constants/pages-apis-mapping";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -15,7 +16,7 @@ type CreateUserFormInputs = z.infer<typeof CREATE_USER_SCHEMA>;
 
 function CreateUser() {
   const router = useRouter();
-
+  const [isCreatingUser, startCreatingUser] = useTransition();
   const {
     control,
     handleSubmit,
@@ -55,16 +56,18 @@ function CreateUser() {
   const onSubmit = async (data: CreateUserFormInputs) => {
     const { firstName, email, password } = data;
 
-    try {
-      await createNewuser(firstName, email, password);
-      toast.success(
-        `${firstName}, your account was created successfully. Redirecting to login...`
-      );
-      router.push(PAGES.LOGIN);
-    } catch (error) {
-      const errorMessage = (error as Error).message;
-      toast.error(errorMessage);
-    }
+    startCreatingUser(async () => {
+      try {
+        await createNewuser(firstName, email, password);
+        toast.success(
+          `${firstName}, your account was created successfully. Redirecting to login...`
+        );
+        router.push(PAGES.LOGIN);
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        toast.error(errorMessage);
+      }
+    });
   };
 
   return (
@@ -125,7 +128,9 @@ function CreateUser() {
             )}
           />
           <Button
-            label="Create new user"
+            label={
+              isCreatingUser ? "Creating account..." : "Create new account"
+            }
             type="submit"
             icon="→"
             iconPosition="right"

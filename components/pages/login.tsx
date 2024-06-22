@@ -11,12 +11,13 @@ import { APIS, PAGES } from "@/constants/pages-apis-mapping";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { useTransition } from "react";
 
 type LoginFormInputs = z.infer<typeof LOGIN_SCHEMA>;
 
 function Login() {
   const router = useRouter();
-
+  const [isLoggingIn, startLoggingIn] = useTransition();
   const {
     control,
     handleSubmit,
@@ -30,7 +31,10 @@ function Login() {
     },
   });
 
-  async function userLogin(email: string, password: string) {
+  async function userLogin(
+    email: string,
+    password: string
+  ): Promise<{ userId: number }> {
     const response = await fetch(APIS.LOGIN, {
       method: "POST",
       headers: {
@@ -51,15 +55,18 @@ function Login() {
   const onSubmit = async (data: LoginFormInputs) => {
     const { email, password } = data;
 
-    try {
-      await userLogin(email, password);
-      Cookies.set("userEmail", email, { expires: 1 });
-      toast.success("Login successful. Redirecting...");
-      router.push(PAGES.HOME);
-    } catch (error) {
-      const errorMessage = (error as Error).message;
-      toast.error(errorMessage);
-    }
+    startLoggingIn(async () => {
+      try {
+        const userData = await userLogin(email, password);
+        Cookies.set("userEmail", email, { expires: 1 });
+        Cookies.set("userId", userData.userId.toString(), { expires: 1 });
+        toast.success("Login successful. Redirecting...");
+        router.push(PAGES.HOME);
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        toast.error(errorMessage);
+      }
+    });
   };
 
   return (
@@ -105,7 +112,12 @@ function Login() {
               />
             )}
           />
-          <Button label="Login" type="submit" icon="→" iconPosition="right" />
+          <Button
+            label={isLoggingIn ? "Logging in..." : "Login"}
+            type="submit"
+            icon="→"
+            iconPosition="right"
+          />
         </form>
         <p className="text-sm text-center tracking-tighter">
           Don&apos;t have an account yet?&nbsp;
