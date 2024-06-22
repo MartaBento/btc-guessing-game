@@ -7,11 +7,12 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { APIS, PAGES } from "@/constants/pages-apis-mapping";
+import { PAGES } from "@/constants/pages-apis-mapping";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useTransition } from "react";
+import { userLogin } from "@/actions/server-actions";
 
 type LoginFormInputs = z.infer<typeof LOGIN_SCHEMA>;
 
@@ -30,27 +31,6 @@ function Login() {
       password: "",
     },
   });
-
-  async function userLogin(
-    email: string,
-    password: string
-  ): Promise<{ userId: number }> {
-    const response = await fetch(APIS.LOGIN, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      const { error } = errorData;
-      throw new Error(error);
-    }
-
-    return response.json();
-  }
 
   const onSubmit = async (data: LoginFormInputs) => {
     const { email, password } = data;
@@ -113,6 +93,7 @@ function Login() {
             )}
           />
           <Button
+            isLoading={isLoggingIn}
             label={isLoggingIn ? "Logging in..." : "Login"}
             type="submit"
             icon="→"

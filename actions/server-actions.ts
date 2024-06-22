@@ -55,7 +55,7 @@ export async function fetchUserScore(userId: string) {
     const { id, first_name, email, score } = user;
     return { id, first_name, email, score } as UserScore;
   } catch (error) {
-    throw GET_USER_SCORE.INTERNAL_SERVER_ERROR;
+    throw new Error((error as Error).message);
   }
 }
 
@@ -74,6 +74,7 @@ export async function userLogin(email: string, password: string) {
     }
 
     const user = result.rows[0];
+    console.log(user);
 
     if (user.password !== password) {
       throw new Error(LOGIN_ERRORS.INVALID_CREDENTIALS);
@@ -81,7 +82,7 @@ export async function userLogin(email: string, password: string) {
 
     return user.id;
   } catch (error) {
-    throw LOGIN_ERRORS.INTERNAL_SERVER_ERROR;
+    throw new Error((error as Error).message);
   }
 }
 
@@ -110,7 +111,7 @@ export async function userRegister(
 
     return { message: "User created successfully" };
   } catch (error) {
-    throw CREATE_USER_ERRORS.INTERNAL_SERVER_ERROR;
+    throw new Error((error as Error).message);
   }
 }
 
@@ -136,6 +137,6 @@ export async function placeBet(userId: string, betType: string) {
 
     return newBet;
   } catch (error) {
-    throw PLACE_BET_ERRORS.INTERNAL_SERVER_ERROR;
+    throw new Error((error as Error).message);
   }
 }

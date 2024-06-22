@@ -1,9 +1,10 @@
 "use client";
 
+import { userRegister } from "@/actions/server-actions";
 import Button from "@/components/common/button";
 import Input from "@/components/common/input";
 import { CREATE_USER_SCHEMA } from "@/constants/form-schemas";
-import { APIS, PAGES } from "@/constants/pages-apis-mapping";
+import { PAGES } from "@/constants/pages-apis-mapping";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,34 +32,12 @@ function CreateUser() {
     },
   });
 
-  async function createNewuser(
-    firstName: string,
-    email: string,
-    password: string
-  ) {
-    const response = await fetch(APIS.CREATE_USER, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ firstName, email, password }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      const { error } = errorData;
-      throw new Error(error);
-    }
-
-    return response.json();
-  }
-
   const onSubmit = async (data: CreateUserFormInputs) => {
     const { firstName, email, password } = data;
 
     startCreatingUser(async () => {
       try {
-        await createNewuser(firstName, email, password);
+        await userRegister(firstName, email, password);
         toast.success(
           `${firstName}, your account was created successfully. Redirecting to login...`
         );
@@ -128,6 +107,7 @@ function CreateUser() {
             )}
           />
           <Button
+            isLoading={isCreatingUser}
             label={
               isCreatingUser ? "Creating account..." : "Create new account"
             }
