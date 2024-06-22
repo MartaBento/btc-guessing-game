@@ -19,7 +19,7 @@ export default async function Home() {
 
   return (
     <GuessingGame
-      currentUSDPrice={currentUSDPrice}
+      initialUSDPrice={currentUSDPrice}
       lastUpdated={lastUpdated}
       userScore={currentUserScore}
     />

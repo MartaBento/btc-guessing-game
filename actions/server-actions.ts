@@ -7,6 +7,7 @@ import {
   GET_USER_SCORE,
   LOGIN_ERRORS,
   PLACE_BET_ERRORS,
+  RESOLVE_BET,
 } from "@/constants/error-mapping";
 
 export async function fetchCoinMarketCap(
@@ -115,8 +116,17 @@ export async function userRegister(
   }
 }
 
-export async function placeBet(userId: string, betType: string) {
-  if (!userId || !betType) {
+export async function placeBet(
+  userId: string,
+  betType: string,
+  initialPrice: number
+) {
+  if (
+    !userId ||
+    !betType ||
+    initialPrice === undefined ||
+    isNaN(initialPrice)
+  ) {
     throw PLACE_BET_ERRORS.MISSING_PARAMS;
   }
 
@@ -128,14 +138,78 @@ export async function placeBet(userId: string, betType: string) {
     }
 
     const insertResult = await sql`
-      INSERT INTO Bets (user_id, bet_type, created_at, resolved)
-      VALUES (${userId}, ${betType}, NOW(), FALSE)
-      RETURNING id, user_id, bet_type, created_at, resolved, result;
+      INSERT INTO Bets (user_id, bet_type, created_at, resolved, initial_price)
+      VALUES (${userId}, ${betType}, NOW(), FALSE, ${initialPrice})
+      RETURNING id, user_id, bet_type, created_at, resolved, result, initial_price;
     `;
 
     const newBet = insertResult.rows[0];
 
     return newBet;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+}
+
+export async function checkBetResolution(userId: string) {
+  if (!userId) {
+    throw RESOLVE_BET.MISSING_PARAMS;
+  }
+
+  try {
+    const betResult = await sql`
+      SELECT id, created_at, resolved, bet_type, initial_price, resolved_price
+      FROM Bets
+      WHERE user_id = ${userId} AND resolved = false
+    `;
+
+    if (betResult.rows.length === 0) {
+      return { resolved: true, message: "No pending bets.", scoreChange: 0 };
+    }
+
+    const bet = betResult.rows[0];
+    const currentTime = new Date();
+    const betTime = new Date(bet.created_at);
+    const timeElapsed = (currentTime.getTime() - betTime.getTime()) / 1000;
+
+    const currentCurrencyRatio = await fetchCoinMarketCap();
+    const currentPrice = currentCurrencyRatio.data.BTC.quote.USD.price;
+
+    let resolved = false;
+    let message = "";
+    let scoreChange = 0;
+
+    if (timeElapsed >= 60 && currentPrice !== bet.initial_price) {
+      resolved = true;
+      message = "Your bet has been resolved!";
+
+      const correct =
+        (bet.bet_type === "up" && currentPrice > bet.initial_price) ||
+        (bet.bet_type === "down" && currentPrice < bet.initial_price);
+
+      scoreChange = correct ? 1 : -1;
+
+      await sql`
+        UPDATE Bets
+        SET resolved = true,
+            resolved_price = ${currentPrice}
+        WHERE id = ${bet.id}
+      `;
+
+      await sql`
+        UPDATE Users
+        SET score = score + ${scoreChange}
+        WHERE id = ${userId}
+      `;
+
+      message += correct
+        ? " You guessed correctly!"
+        : " You guessed incorrectly.";
+
+      return { resolved, message, scoreChange };
+    } else {
+      return { resolved, message, scoreChange };
+    }
   } catch (error) {
     throw new Error((error as Error).message);
   }

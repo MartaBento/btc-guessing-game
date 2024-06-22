@@ -7,17 +7,17 @@ import Cookies from "js-cookie";
 import { PAGES } from "@/constants/pages-apis-mapping";
 import { useEffect, useState, useTransition } from "react";
 import toast from "react-hot-toast";
-import { placeBet } from "@/actions/server-actions";
+import { checkBetResolution, placeBet } from "@/actions/server-actions";
 
 type GuessingGameProps = {
-  currentUSDPrice: number;
+  initialUSDPrice: number;
   lastUpdated: string;
   userScore: number;
 };
 
 function Header({
   userScore,
-  currentUSDPrice,
+  initialUSDPrice,
   lastUpdated,
 }: GuessingGameProps) {
   const formattedLastUpdated = format(
@@ -29,30 +29,56 @@ function Header({
       <p className="text-base">
         Your current score is: <strong>{userScore}</strong>
       </p>
-      <p>Current BTC price (USD): ${currentUSDPrice}</p>
+      <p>Current BTC price (USD): ${initialUSDPrice}</p>
       <p>Last updated: {formattedLastUpdated}</p>
     </div>
   );
 }
 
 function GuessingGame({
-  currentUSDPrice,
+  initialUSDPrice,
   lastUpdated,
   userScore,
 }: GuessingGameProps) {
   const [isPlacingBet, startPlacingBet] = useTransition();
   const [hasCurrentBet, setHasCurrentBet] = useState(false);
+  const [initialCurrencyRatio, setInitialCurrencyRatio] =
+    useState(initialUSDPrice);
   const router = useRouter();
 
   useEffect(() => {
     const betType = localStorage.getItem("betType");
     setHasCurrentBet(betType !== null);
+
+    localStorage.setItem("initialUSDPrice", initialUSDPrice.toString());
+    setInitialCurrencyRatio(initialUSDPrice);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = () => {
     Cookies.remove("userEmail");
     Cookies.remove("userId");
     router.push(PAGES.LOGIN);
+  };
+
+  const startPolling = (userId: string) => {
+    const interval = setInterval(async () => {
+      try {
+        const response = await checkBetResolution(userId);
+
+        if (response.resolved) {
+          clearInterval(interval);
+          localStorage.removeItem("betType");
+          setHasCurrentBet(false);
+          toast.success(response.message);
+        } else {
+          toast(response.message);
+        }
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        toast.error(errorMessage);
+      }
+    }, 10000);
   };
 
   const handleNewBet = async (betType: "up" | "down") => {
@@ -68,10 +94,11 @@ function GuessingGame({
           return;
         }
 
-        await placeBet(userId, betType);
+        await placeBet(userId, betType, initialUSDPrice);
         toast.success(
           "Your bet has been placed! The market will update soon. Your bet will be resolved when the price is updated. Please wait in this page."
         );
+        startPolling(userId);
       } catch (error) {
         const errorMessage = (error as Error).message;
         toast.error(errorMessage);
@@ -83,7 +110,7 @@ function GuessingGame({
     <main className="flex flex-col items-center justify-center min-h-screen font-mono">
       <Header
         userScore={userScore}
-        currentUSDPrice={currentUSDPrice}
+        initialUSDPrice={initialCurrencyRatio}
         lastUpdated={lastUpdated}
       />
       <div className="flex flex-col bg-white shadow-2xl rounded-lg m-8 p-12 text-center">
@@ -105,6 +132,10 @@ function GuessingGame({
         <span className="text-xl font-bold mt-8">
           Ready to play? Choose one option:
         </span>
+        <span className="text-xs font-light">
+          (If the buttons are disabled, it may be because you have already
+          placed a bet.)
+        </span>
         <div className="flex justify-between space-x-4 mt-8">
           <Button
             icon="☝🏻"
@@ -122,7 +153,9 @@ function GuessingGame({
           />
         </div>
       </div>
-      <Button label="Logout" onClick={handleLogout} />
+      <div>
+        <Button label="Logout" onClick={handleLogout} />
+      </div>
     </main>
   );
 }
