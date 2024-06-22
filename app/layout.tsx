@@ -54,7 +54,7 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-berkeleyBlue min-h-screen">
         <Providers>{children}</Providers>
       </body>
     </html>

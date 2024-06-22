@@ -7,5 +7,5 @@ export const PAGES = {
 export const APIS = {
   LOGIN: "api/login",
   CREATE_USER: "api/create-user",
-  GET_USER: "api/get-user",
+  PLACE_BET: "api/place-bet",
 };

@@ -10,9 +10,5 @@ type LoginLayoutProps = {
 };
 
 export default function LoginLayout({ children }: LoginLayoutProps) {
-  return (
-    <div className="min-h-screen bg-berkeleyBlue">
-      <main>{children}</main>
-    </div>
-  );
+  return <main>{children}</main>;
 }

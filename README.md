@@ -18,6 +18,11 @@ This web app was built to allow users to guess whether the market price of Bitco
 - [ ] The score of each player should be persisted in a backend data store
 - [ ] Players should be able to close their browser and return to see their score and continue to make more guesses
 
+## Additional functionalities
+
+- [x] Create new user in the db
+- [x] Login and logout (very basic - just to have a user session in place)
+
 ## Technologies
 
 - Frontend: Next.js, React, Typescript and Tailwind

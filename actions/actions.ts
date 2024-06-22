@@ -1,56 +1,21 @@
-import { APIS } from "@/constants/pages-apis-mapping";
-import { User } from "@/types/global-types";
+"use server";
 
-export async function userLogin(email: string, password: string) {
-  const response = await fetch(APIS.LOGIN, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
+import { CoinMarketCapResponse } from "@/types/global-types";
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    const { error } = errorData;
-    throw new Error(error);
-  }
-
-  return response.json();
-}
-
-export async function getUser(userId?: number, email?: string): Promise<User> {
+export async function fetchCoinMarketCap(
+  symbol: string = "BTC",
+  convertTo: string = "USD"
+): Promise<CoinMarketCapResponse> {
   const response = await fetch(
-    `${APIS.GET_USER}?${userId ? `userId=${userId}` : `email=${email}`}`,
+    `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbol}&convert=${convertTo}`,
     {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CMC_PRO_API_KEY": process.env.COIN_MARKET_API_KEY || "",
       },
     }
   );
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    const { error } = errorData;
-    throw new Error(error);
-  }
-
-  return response.json();
-}
-
-export async function createNewuser(
-  firstName: string,
-  email: string,
-  password: string
-) {
-  const response = await fetch(APIS.CREATE_USER, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ firstName, email, password }),
-  });
 
   if (!response.ok) {
     const errorData = await response.json();

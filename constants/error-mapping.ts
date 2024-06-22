@@ -16,3 +16,9 @@ export const GET_USER_ERRORS = {
   USER_NOT_FOUND: "User not found.",
   INTERNAL_SERVER_ERROR: "Internal server error.",
 };
+
+export const PLACE_BET_ERRORS = {
+  USER_NOT_FOUND: "User not found.",
+  MISSING_PARAMS: "Missing userId or betType.",
+  INTERNAL_SERVER_ERROR: "Internal server error.",
+};
