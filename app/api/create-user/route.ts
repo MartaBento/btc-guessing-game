@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { first_name, email, password } = body;
+  const { firstName, email, password } = body;
 
-  if (!first_name || !email || !password) {
+  if (!firstName || !email || !password) {
     return NextResponse.json(
       { error: CREATE_USER_ERRORS.MISSING_FIELDS },
       { status: 400 }
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     await sql`
       INSERT INTO Users (first_name, email, password)
-      VALUES (${first_name}, ${email}, ${password})
+      VALUES (${firstName}, ${email}, ${password})
     `;
 
     return NextResponse.json(

@@ -37,6 +37,7 @@ function Login() {
     try {
       await userLogin(email, password);
       Cookies.set("userEmail", email, { expires: 1 });
+      toast.success("Login successful. Redirecting...");
       router.push(PAGES.HOME);
     } catch (error) {
       const errorMessage = (error as Error).message;
@@ -46,13 +47,15 @@ function Login() {
 
   return (
     <main className="flex items-center justify-center min-h-screen font-mono">
-      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[500px] w-[800px] space-y-4">
-        <h1 className="font-inter text-3xl tracking-tighter font-black">
-          BTC Guessing Game
-        </h1>
-        <h2 className="font-mono text-lg">
-          Welcome! 👋🏻 Please login or create an account.
-        </h2>
+      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[600px] w-[800px] space-y-8">
+        <div className="flex flex-col space-y-4 items-center">
+          <h1 className="font-inter text-3xl tracking-tighter font-black">
+            BTC Guessing Game
+          </h1>
+          <h2 className="font-mono text-lg">
+            Welcome! 👋🏻 Please login or create an account.
+          </h2>
+        </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col space-y-4 w-96 pt-4"

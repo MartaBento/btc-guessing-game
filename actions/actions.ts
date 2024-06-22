@@ -38,3 +38,25 @@ export async function getUser(userId?: number, email?: string): Promise<User> {
 
   return response.json();
 }
+
+export async function createNewuser(
+  firstName: string,
+  email: string,
+  password: string
+) {
+  const response = await fetch(APIS.CREATE_USER, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ firstName, email, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    const { error } = errorData;
+    throw new Error(error);
+  }
+
+  return response.json();
+}
