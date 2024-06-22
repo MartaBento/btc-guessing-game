@@ -11,9 +11,11 @@ export default async function Home() {
     userScore = await fetchUserScore(userId);
   }
 
+  // for the sake of simplicity, I'll assume that the user score can be negative also.
   const currentUserScore =
-    userScore && userScore.score !== "-1" ? Number(userScore.score) : 0;
+    userScore && typeof userScore === "number" ? userScore : 0;
 
+  // for the sake of simplicity, I'm also keeping the price as is (with multiple decimals).
   const currentUSDPrice = currentData.data.BTC.quote.USD.price;
   const lastUpdated = currentData.data.BTC.quote.USD.last_updated;
 

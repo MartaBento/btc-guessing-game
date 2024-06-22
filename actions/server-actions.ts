@@ -1,7 +1,7 @@
 "use server";
 
 import { sql } from "@vercel/postgres";
-import { CoinMarketCapResponse, UserScore } from "@/types/global-types";
+import { CoinMarketCapResponse } from "@/types/global-types";
 import {
   CREATE_USER_ERRORS,
   GET_USER_SCORE,
@@ -35,18 +35,16 @@ export async function fetchCoinMarketCap(
   return response.json();
 }
 
-export async function fetchUserScore(userId: string): Promise<UserScore> {
+export async function fetchUserScore(userId: string): Promise<number> {
   if (!userId) {
     throw GET_USER_SCORE.MISSING_PARAMS;
   }
 
   try {
     const result = await sql`
-      SELECT Users.id, first_name, email, COALESCE(SUM(CASE WHEN result = TRUE THEN 1 ELSE -1 END), 0) AS score
+      SELECT score
       FROM Users
-      LEFT JOIN Bets ON Users.id = Bets.user_id
       WHERE Users.id = ${userId}
-      GROUP BY Users.id, first_name, email
     `;
 
     if (result.rows.length === 0) {
@@ -54,8 +52,8 @@ export async function fetchUserScore(userId: string): Promise<UserScore> {
     }
 
     const user = result.rows[0];
-    const { id, first_name, email, score } = user;
-    return { id, first_name, email, score };
+    const { score } = user;
+    return score;
   } catch (error) {
     throw new Error((error as Error).message);
   }
@@ -153,7 +151,7 @@ export async function placeBet(
 
 export async function checkBetResolution(userId: string) {
   if (!userId) {
-    throw RESOLVE_BET.MISSING_PARAMS;
+    throw new Error(RESOLVE_BET.MISSING_PARAMS);
   }
 
   try {
@@ -172,44 +170,60 @@ export async function checkBetResolution(userId: string) {
     const betTime = new Date(bet.created_at);
     const timeElapsed = (currentTime.getTime() - betTime.getTime()) / 1000;
 
+    if (timeElapsed < 60) {
+      return {
+        resolved: false,
+        message: `Waiting for ${Math.ceil(60 - timeElapsed)} seconds...`,
+        scoreChange: 0,
+      };
+    }
+
     const currentCurrencyRatio = await fetchCoinMarketCap();
-    const currentPrice = currentCurrencyRatio.data.BTC.quote.USD.price;
+    const currentPriceString =
+      currentCurrencyRatio.data.BTC.quote.USD.price.toString();
+    const currentPrice = parseFloat(currentPriceString);
+    const initialPrice = parseFloat(bet.initial_price);
 
-    let resolved = false;
-    let message = "";
-    let scoreChange = 0;
+    const priceChangeThreshold = 0.01;
 
-    if (timeElapsed >= 60 && currentPrice !== bet.initial_price) {
-      resolved = true;
-      message = "Your bet has been resolved!";
+    if (Math.abs(currentPrice - initialPrice) <= priceChangeThreshold) {
+      return {
+        resolved: false,
+        message: `Waiting for price change...`,
+        scoreChange: 0,
+      };
+    }
 
-      const correct =
-        (bet.bet_type === "up" && currentPrice > bet.initial_price) ||
-        (bet.bet_type === "down" && currentPrice < bet.initial_price);
+    const correct =
+      (bet.bet_type === "up" && currentPrice > initialPrice) ||
+      (bet.bet_type === "down" && currentPrice < initialPrice);
 
-      scoreChange = correct ? 1 : -1;
+    const scoreChange = correct ? 1 : -1;
+    const result = correct ? "win" : "loss";
 
-      await sql`
+    await sql`
         UPDATE Bets
         SET resolved = true,
-            resolved_price = ${currentPrice}
+            resolved_price = ${currentPrice},
+            result = ${result}
         WHERE id = ${bet.id}
       `;
 
-      await sql`
-        UPDATE Users
-        SET score = score + ${scoreChange}
-        WHERE id = ${userId}
-      `;
+    await sql`
+      UPDATE Users
+      SET score = score + ${scoreChange}
+      WHERE id = ${userId}
+    `;
 
-      message += correct
-        ? " You guessed correctly!"
-        : " You guessed incorrectly.";
+    const message = `Your bet has been resolved. Initial price: $${initialPrice.toFixed(
+      8
+    )}, Current price: $${currentPrice.toFixed(8)}. You guessed ${
+      correct
+        ? "correctly! 🎉 Keep playing to improve your score."
+        : "incorrectly. 👀 - maybe you should try again."
+    }`;
 
-      return { resolved, message, scoreChange };
-    } else {
-      return { resolved, message, scoreChange };
-    }
+    return { resolved: true, message, scoreChange };
   } catch (error) {
     throw new Error((error as Error).message);
   }

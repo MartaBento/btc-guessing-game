@@ -49,10 +49,3 @@ export type CoinMarketCapResponse = {
     };
   };
 };
-
-export type UserScore = {
-  id: number;
-  first_name: string;
-  email: string;
-  score: string;
-};

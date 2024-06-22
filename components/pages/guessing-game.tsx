@@ -62,15 +62,20 @@ function GuessingGame({
   };
 
   const startPolling = (userId: string) => {
-    const interval = setInterval(async () => {
+    let interval: number | null = null;
+
+    const pollBetResolution = async () => {
       try {
         const response = await checkBetResolution(userId);
 
         if (response.resolved) {
-          clearInterval(interval);
+          if (interval !== null) {
+            clearInterval(interval);
+          }
           localStorage.removeItem("betType");
           setHasCurrentBet(false);
           toast.success(response.message);
+          router.refresh();
         } else {
           toast(response.message);
         }
@@ -78,7 +83,9 @@ function GuessingGame({
         const errorMessage = (error as Error).message;
         toast.error(errorMessage);
       }
-    }, 10000);
+    };
+
+    interval = window.setInterval(pollBetResolution, 5000);
   };
 
   const handleNewBet = async (betType: "up" | "down") => {
