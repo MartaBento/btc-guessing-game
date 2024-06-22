@@ -35,13 +35,16 @@ function Header({
   );
 }
 
-function LoadingOverlay() {
+function LoadingOverlay({ timerSeconds }: { timerSeconds: number }) {
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-      <div className="bg-white p-4 rounded-lg shadow-lg">
+      <div className="bg-white rounded-lg shadow-lg text-center p-8">
         <p className="text-lg font-semibold">
           We are evaluating your bet. Please wait...
         </p>
+        <span className="text-sm">
+          Remaining time for the next update: {timerSeconds} seconds
+        </span>
       </div>
     </div>
   );
@@ -55,6 +58,7 @@ function GuessingGame({
   const [isLoading, setLoading] = useState(false);
   const [isPlacingBet, startPlacingBet] = useTransition();
   const [hasCurrentBet, setHasCurrentBet] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(60);
   const router = useRouter();
 
   useEffect(() => {
@@ -66,6 +70,22 @@ function GuessingGame({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    let timer = null;
+
+    if (isLoading) {
+      timer = setInterval(() => {
+        setTimerSeconds((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+    } else {
+      setTimerSeconds(60);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isLoading]);
 
   const handleLogout = () => {
     Cookies.remove("userEmail");
@@ -96,6 +116,7 @@ function GuessingGame({
         const errorMessage = (error as Error).message;
         toast.error(errorMessage);
       } finally {
+        // Always set loading to false after checking resolution
         setLoading(false);
       }
     };
@@ -180,7 +201,7 @@ function GuessingGame({
       <div className="mb-8 xl:mb-0">
         <Button label="Logout" onClick={handleLogout} />
       </div>
-      {isLoading && <LoadingOverlay />}
+      {isLoading && <LoadingOverlay timerSeconds={timerSeconds} />}
     </main>
   );
 }
