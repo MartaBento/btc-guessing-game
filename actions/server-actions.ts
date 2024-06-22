@@ -2,13 +2,7 @@
 
 import { sql } from "@vercel/postgres";
 import { CoinMarketCapResponse } from "@/types/global-types";
-import {
-  CREATE_USER_ERRORS,
-  GET_USER_SCORE,
-  LOGIN_ERRORS,
-  PLACE_BET_ERRORS,
-  RESOLVE_BET,
-} from "@/constants/error-mapping";
+import { PLACE_BET_ERRORS, RESOLVE_BET } from "@/constants/error-mapping";
 
 export async function fetchCoinMarketCap(
   symbol: string = "BTC",
@@ -33,85 +27,6 @@ export async function fetchCoinMarketCap(
   }
 
   return response.json();
-}
-
-export async function fetchUserScore(userId: string): Promise<number> {
-  if (!userId) {
-    throw GET_USER_SCORE.MISSING_PARAMS;
-  }
-
-  try {
-    const result = await sql`
-      SELECT score
-      FROM Users
-      WHERE Users.id = ${userId}
-    `;
-
-    if (result.rows.length === 0) {
-      throw new Error(GET_USER_SCORE.USER_NOT_FOUND);
-    }
-
-    const user = result.rows[0];
-    const { score } = user;
-    return score;
-  } catch (error) {
-    throw new Error((error as Error).message);
-  }
-}
-
-export async function userLogin(email: string, password: string) {
-  if (!email || !password) {
-    throw LOGIN_ERRORS.MISSING_EMAIL_PWD;
-  }
-
-  try {
-    const result = await sql`
-      SELECT * FROM Users WHERE email = ${email}
-    `;
-
-    if (result.rows.length === 0) {
-      throw new Error(LOGIN_ERRORS.USER_NOT_FOUND);
-    }
-
-    const user = result.rows[0];
-
-    if (user.password !== password) {
-      throw new Error(LOGIN_ERRORS.INVALID_CREDENTIALS);
-    }
-
-    return user.id;
-  } catch (error) {
-    throw new Error((error as Error).message);
-  }
-}
-
-export async function userRegister(
-  email: string,
-  password: string,
-  firstName: string
-) {
-  if (!email || !password || !firstName) {
-    throw CREATE_USER_ERRORS.MISSING_FIELDS;
-  }
-
-  try {
-    const existingUserResult = await sql`
-      SELECT * FROM Users WHERE email = ${email}
-    `;
-
-    if (existingUserResult.rows.length > 0) {
-      throw new Error(CREATE_USER_ERRORS.USER_EXISTS);
-    }
-
-    await sql`
-      INSERT INTO Users (first_name, email, password)
-      VALUES (${firstName}, ${email}, ${password})
-    `;
-
-    return { message: "User created successfully" };
-  } catch (error) {
-    throw new Error((error as Error).message);
-  }
 }
 
 export async function placeBet(
