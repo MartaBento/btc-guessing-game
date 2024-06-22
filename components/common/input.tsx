@@ -8,6 +8,7 @@ type InputProps = {
   type: "email" | "password" | "text";
   autoComplete?: string;
   placeholder: string;
+  error?: string;
 };
 
 function Input({
@@ -16,6 +17,8 @@ function Input({
   type,
   autoComplete,
   placeholder,
+  error,
+  ...rest
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -43,6 +46,7 @@ function Input({
       </label>
       <div className="relative">
         <input
+          {...rest}
           id={label}
           name={label}
           type={calculateType}
@@ -60,6 +64,11 @@ function Input({
           </button>
         )}
       </div>
+      {error && (
+        <p className="text-red-800 mt-1 text-xs font-semibold tracking-tight">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
