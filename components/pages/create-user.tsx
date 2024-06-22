@@ -50,19 +50,17 @@ function CreateUser() {
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen font-mono">
-      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-4 h-[600px] w-[800px] space-y-8 shadow-2xl">
+    <main className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col bg-white rounded-lg items-center justify-center p-8 xl:p-4 xl:h-[600px] xl:w-[800px] space-y-8 shadow-2xl h-full w-96">
         <div className="flex flex-col space-y-4 items-center">
-          <h1 className="font-inter text-3xl tracking-tighter font-black">
+          <h1 className="text-3xl tracking-tighter font-black">
             BTC Guessing Game
           </h1>
-          <h2 className="font-mono text-lg">
-            Let&apos;s create your account. 🚀
-          </h2>
+          <h2 className="text-lg">Let&apos;s create your account. 🚀</h2>
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4 w-96 pt-4"
+          className="flex flex-col space-y-4 xl:w-96 pt-4"
         >
           <Controller
             control={control}

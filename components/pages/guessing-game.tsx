@@ -25,7 +25,7 @@ function Header({
     "MMMM dd, yyyy HH:mm"
   );
   return (
-    <div className="flex flex-col text-center text-white border-dashed border-gray-400 border p-12 rounded-lg">
+    <div className="flex flex-col text-center text-white border-dashed border-gray-400 border p-4 xl:p-12 m-4 xl:m-0 rounded-lg">
       <p className="text-base">
         Your current score is: <strong>{userScore}</strong>
       </p>
@@ -85,7 +85,7 @@ function GuessingGame({
       }
     };
 
-    interval = window.setInterval(pollBetResolution, 5000);
+    interval = window.setInterval(pollBetResolution, 60000);
   };
 
   const handleNewBet = async (betType: "up" | "down") => {
@@ -114,18 +114,18 @@ function GuessingGame({
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen font-mono">
+    <main className="flex flex-col items-center justify-center min-h-screen">
       <Header
         userScore={userScore}
         initialUSDPrice={initialCurrencyRatio}
         lastUpdated={lastUpdated}
       />
-      <div className="flex flex-col bg-white shadow-2xl rounded-lg m-8 p-12 text-center">
+      <div className="flex flex-col bg-white shadow-2xl rounded-lg m-8 p-8 xl:p-12 text-center">
         <div className="mt-4 space-y-4">
-          <h1 className="font-inter text-3xl tracking-tighter font-black">
+          <h1 className="text-2xl xl:text-3xl tracking-tighter font-black">
             BTC guessing game
           </h1>
-          <h2 className="text-gl">
+          <h2 className="text-base xl:text-xl">
             The goal of this game is to guess whether the market price of
             Bitcoin (BTC/USD) will be higher or lower after one minute. The
             rules are simple: In order to play, you have to guess. Press either
@@ -136,14 +136,16 @@ function GuessingGame({
             time.
           </h4>
         </div>
-        <span className="text-xl font-bold mt-8">
-          Ready to play? Choose one option:
-        </span>
-        <span className="text-xs font-light">
-          (If the buttons are disabled, it may be because you have already
-          placed a bet.)
-        </span>
-        <div className="flex justify-between space-x-4 mt-8">
+        <div className="mt-8 flex flex-col">
+          <span className="text-lg xl:text-lg font-bold">
+            Ready to play? Choose one option:
+          </span>
+          <span className="text-xs font-light">
+            (If the buttons are disabled, it may be because you have already
+            placed a bet.)
+          </span>
+        </div>
+        <div className="flex flex-col xl:flex-row justify-between space-y-4 xl:space-y-0 xl:space-x-4 mt-8">
           <Button
             icon="☝🏻"
             label={isPlacingBet ? "Placing bet..." : "Higher"}
@@ -160,7 +162,7 @@ function GuessingGame({
           />
         </div>
       </div>
-      <div>
+      <div className="mb-8 xl:mb-0">
         <Button label="Logout" onClick={handleLogout} />
       </div>
     </main>
