@@ -23,6 +23,11 @@ The web application can be accessed at [https://btc-guessing-game.vercel.app](ht
     <img src="public/screenshots/BTC_3.png" alt="Bitcoin Guessing create new user screen" title="Bitcoin Guessing create new user screen">
 </p>
 
+<p align="center">
+    <h2 align="center">Waiting screen</h2>
+    <img src="public/screenshots/BTC_4.png" alt="Bitcoin Guessing loading overlay" title="Bitcoin Guessing loading overlay">
+</p>
+
 ## Functional overview
 
 - When the user opens the app, he will be forwarded to `/login`
