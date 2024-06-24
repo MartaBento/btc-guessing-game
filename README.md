@@ -4,6 +4,20 @@ This web application enables users to predict if the market price of Bitcoin (BT
 
 The web application can be accessed at [https://btc-guessing-game.vercel.app](https://btc-guessing-game.vercel.app).
 
+## Functional overview
+
+- When the user opens the app, he will be forwarded to `/login`
+- If he doesn't have an account, he will be able to create a new account in `/create-user`
+- Route guard are provided by Next.js middleware (e.g., logged out users will not be able to enter the game)
+- Error handling provided (e.g., No user found, Invalid credentials, etc.)
+- If the user is already logged in, he will be able to go immediately to his game
+- When the user enters the homepage, he will see his current score, the current BTC price (USD) and the time this value was last updated
+- In order to start, the user will click "higher" or "lower"
+- After that, he will need to wait at least 60 seconds; if the value remains the same, he will continue waiting until the price chances, otherwise, he will see a toast message saying weather his bet was correct or incorrect
+- During the time where we needs to wait for a bet resolution, user will not be able to play
+
+Note: There's a lot (a lot!) of things that there weren't consider here in this small POC, like password hashing in the db, the user can edit his cookie information, remove the current bet from localStorage, and so on...
+
 ## Rules
 
 - [x] The player can at all times see their current score and the latest available BTC price in USD
