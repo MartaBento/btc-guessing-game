@@ -1,5 +1,7 @@
 import type { Config } from "jest";
 import nextJest from "next/jest.js";
+import { pathsToModuleNameMapper } from "ts-jest";
+import { compilerOptions } from "./tsconfig.json";
 
 const createJestConfig = nextJest({
   dir: "./",
@@ -8,12 +10,7 @@ const createJestConfig = nextJest({
 const config: Config = {
   coverageProvider: "v8",
   testEnvironment: "jsdom",
-  moduleNameMapper: {
-    "^@/components/(.*)$": "app/components/$1",
-    "^@/constants/(.*)$": "app/constants/$1",
-    "^@/actions/(.*)$": "app/actions/$1",
-    "^@/types/(.*)$": "app/types/$1",
-  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 };
 
 export default createJestConfig(config);
