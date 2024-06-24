@@ -1,5 +1,6 @@
-import CreateUser from "@/components/pages/create-user";
 import "@testing-library/jest-dom";
+import CreateUser from "@/components/pages/create-user";
+import { PAGES } from "@/constants/pages-apis-mapping";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -58,7 +59,7 @@ describe("CreateUser Component", () => {
 
     expect(screen.getByLabelText("First name")).toHaveValue("John");
     expect(screen.getByLabelText("Email")).toHaveValue("john@example.com");
-    expect(screen.getByLabelText("Your password")).toHaveValue("password123");
+    expect(screen.getByLabelText("Your password")).toHaveValue("Password123!");
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
@@ -73,7 +74,7 @@ describe("CreateUser Component", () => {
       expect(toast.success).toHaveBeenCalledWith(
         "John, your account was created successfully. Redirecting to login..."
       );
-      expect(mockPush).toHaveBeenCalledWith("/login");
+      expect(mockPush).toHaveBeenCalledWith(PAGES.LOGIN);
     });
   });
 
@@ -103,7 +104,7 @@ describe("CreateUser Component", () => {
       target: { value: "john@example.com" },
     });
     fireEvent.change(screen.getByLabelText("Your password"), {
-      target: { value: "password123" },
+      target: { value: "Password123!" },
     });
 
     mockFetch.mockResolvedValueOnce({
