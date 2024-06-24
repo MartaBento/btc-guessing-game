@@ -29,11 +29,10 @@ function Header({
     parseISO(lastUpdated),
     "MMMM dd, yyyy HH:mm"
   );
+
   return (
     <div className="flex flex-col text-center text-white border-dashed border-gray-400 border p-4 xl:p-12 m-4 xl:m-0 rounded-lg">
-      <p className="text-base">
-        Your current score is: <strong>{userScore}</strong>
-      </p>
+      <p className="text-base">Your current score is: {userScore}</p>
       <p>Current BTC price (USD): ${initialUSDPrice}</p>
       <p>Last updated: {formattedLastUpdated}</p>
     </div>
@@ -125,7 +124,6 @@ function GuessingGame({
         const errorMessage = (error as Error).message;
         toast.error(errorMessage);
       } finally {
-        // Always set loading to false after checking resolution
         setLoading(false);
       }
     };

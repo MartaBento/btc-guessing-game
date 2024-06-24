@@ -52,7 +52,7 @@ function Input({
           type={calculateType}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className="block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-500 placeholder:text-sm focus:ring-2 focus:ring-inset focus:ring-berkeleyBlue pr-10" // Adjust padding-right to make space for the button
+          className="block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-500 placeholder:text-sm focus:ring-2 focus:ring-inset focus:ring-berkeleyBlue pr-10"
         />
         {isPasswordType && (
           <button
