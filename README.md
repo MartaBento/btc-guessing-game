@@ -1,8 +1,27 @@
 # Introduction
 
+<p align="center">
+    <img src="public/favicon.ico" alt="Bitcoin Guessing Game Logo" title="Bitcoin Guessing Game">
+</p>
+
 This web application enables users to predict if the market price of Bitcoin (BTC/USD) will increase or decrease after a one-minute interval.
 
 The web application can be accessed at [https://btc-guessing-game.vercel.app](https://btc-guessing-game.vercel.app).
+
+<p align="center">
+    <h2 align="center">Home Screen</h2>
+    <img src="public/screenshots/BTC_1.png" alt="Bitcoin Guessing home screen" title="Bitcoin Guessing Game homescreen">
+</p>
+
+<p align="center">
+    <h2 align="center">Login Screen</h2>
+    <img src="public/screenshots/BTC_2.png" alt="Bitcoin Guessing login screen" title="Bitcoin Guessing login screen">
+</p>
+
+<p align="center">
+    <h2 align="center">Create New User Screen</h2>
+    <img src="public/screenshots/BTC_3.png" alt="Bitcoin Guessing create new user screen" title="Bitcoin Guessing create new user screen">
+</p>
 
 ## Functional overview
 
