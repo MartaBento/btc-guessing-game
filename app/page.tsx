@@ -34,13 +34,12 @@ export default async function Home() {
   const currentUserScore =
     userScore && typeof userScore === "number" ? userScore : 0;
 
-  // for the sake of simplicity, I'm also keeping the price as is (with multiple decimals).
-  const currentUSDPrice = currentData.data.BTC.quote.USD.price;
+  const currentUSDPrice = currentData.data.BTC.quote.USD.price.toFixed(2);
   const lastUpdated = currentData.data.BTC.quote.USD.last_updated;
 
   return (
     <GuessingGame
-      initialUSDPrice={currentUSDPrice}
+      initialUSDPrice={parseFloat(currentUSDPrice)}
       lastUpdated={lastUpdated}
       userScore={currentUserScore}
     />

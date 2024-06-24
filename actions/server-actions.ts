@@ -94,10 +94,10 @@ export async function checkBetResolution(userId: string) {
     }
 
     const currentCurrencyRatio = await fetchCoinMarketCap();
-    const currentPriceString =
-      currentCurrencyRatio.data.BTC.quote.USD.price.toString();
-    const currentPrice = parseFloat(currentPriceString);
-    const initialPrice = parseFloat(bet.initial_price);
+    const currentPrice = parseFloat(
+      currentCurrencyRatio.data.BTC.quote.USD.price.toFixed(2)
+    );
+    const initialPrice = parseFloat(parseFloat(bet.initial_price).toFixed(2));
 
     const priceChangeThreshold = 0.01;
 
@@ -131,8 +131,8 @@ export async function checkBetResolution(userId: string) {
     `;
 
     const message = `Your bet has been resolved. Initial price: $${initialPrice.toFixed(
-      8
-    )}, Current price: $${currentPrice.toFixed(8)}. You guessed ${
+      2
+    )}; Current price: $${currentPrice.toFixed(2)}. You guessed ${
       correct
         ? "correctly! 🎉 Keep playing to improve your score."
         : "incorrectly. 👀 - maybe you should try again."

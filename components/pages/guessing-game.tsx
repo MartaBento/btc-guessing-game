@@ -15,6 +15,11 @@ type GuessingGameProps = {
   userScore: number;
 };
 
+type LoadingOverlayProps = {
+  timerSeconds: number;
+  initialUSDPrice: number;
+};
+
 function Header({
   userScore,
   initialUSDPrice,
@@ -24,23 +29,26 @@ function Header({
     parseISO(lastUpdated),
     "MMMM dd, yyyy HH:mm"
   );
+
   return (
     <div className="flex flex-col text-center text-white border-dashed border-gray-400 border p-4 xl:p-12 m-4 xl:m-0 rounded-lg">
-      <p className="text-base">
-        Your current score is: <strong>{userScore}</strong>
-      </p>
+      <p className="text-base">Your current score is: {userScore}</p>
       <p>Current BTC price (USD): ${initialUSDPrice}</p>
       <p>Last updated: {formattedLastUpdated}</p>
     </div>
   );
 }
 
-function LoadingOverlay({ timerSeconds }: { timerSeconds: number }) {
+function LoadingOverlay({
+  timerSeconds,
+  initialUSDPrice,
+}: LoadingOverlayProps) {
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+    <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-800 bg-opacity-90 z-50">
       <div className="bg-white rounded-lg shadow-lg text-center p-8">
         <p className="text-lg font-semibold">
-          We are evaluating your bet. Please wait...
+          We are evaluating your bet - please wait. The current value is $
+          {initialUSDPrice}.
         </p>
         <span className="text-sm">
           Remaining time for the next update: {timerSeconds} seconds
@@ -116,7 +124,6 @@ function GuessingGame({
         const errorMessage = (error as Error).message;
         toast.error(errorMessage);
       } finally {
-        // Always set loading to false after checking resolution
         setLoading(false);
       }
     };
@@ -201,7 +208,12 @@ function GuessingGame({
       <div className="mb-8 xl:mb-0">
         <Button label="Logout" onClick={handleLogout} />
       </div>
-      {isLoading && <LoadingOverlay timerSeconds={timerSeconds} />}
+      {isLoading && (
+        <LoadingOverlay
+          timerSeconds={timerSeconds}
+          initialUSDPrice={initialUSDPrice}
+        />
+      )}
     </main>
   );
 }
